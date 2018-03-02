@@ -53,12 +53,16 @@ def run(mat, model_type, model_config):
             print "scorer says to skip this model, will do"
             continue
 
-        model_list.append({
+        tmp_d = {
             "model": model,
             "now_model_config": now_model_config,
             "score": score,
-            'debug_var': debug_var,
-        })
+        }
+
+        if DEBUG_MODE:
+            tmp_d['debug_var'] = debug_var
+
+        model_list.append(tmp_d)
         print 'score:', score 
         print '='*20
         print 
