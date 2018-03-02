@@ -23,17 +23,17 @@ def run(mat, model_type, model_config):
 
     start = mat[0].copy() 
     end = mat[-1].copy() 
-    noise_std = model_config['std_of_normal_noise_in_generalization_test']
     list_of_random_startend = []
     for i in range(10):
-        now_end = end.copy()
-        now_end[2] += i*0.01
+        start = mat[0].copy() 
+        end = mat[-1].copy() 
+        end[2] += i*0.01
         list_of_random_startend.append((
             start,
-            #start+numpy.random.normal(0, noise_std, mat.shape[1]),
-            now_end
+            end,
         ))
 
+    dmp_instance = util.get_dmp_model(mat, model_type)
 
     model_list = []
     model_generator = model_config_generation.get_model_config_generator(model_type, model_config)
@@ -42,20 +42,19 @@ def run(mat, model_type, model_config):
         print '-'*20
         print ' working on config:', now_model_config
 
-        try:
-            model_instance = util.get_dmp_model(mat, model_type, now_model_config)
-            score, debug_var = model_score.score(model_instance, mat, list_of_random_startend)
+        model = {
+            'dmp_instance': dmp_instance,
+            'gen_ay': now_model_config['gen_ay'],
+        }
+        score, debug_var = model_score.score(model, mat, list_of_random_startend)
 
-        except Exception as e:
-            print "Failed to train model_instance, will ignore it: %s"%e
-            raise e
             
         if score == None:
             print "scorer says to skip this model, will do"
             continue
 
         model_list.append({
-            "model_instance": model_instance,
+            "model": model,
             "now_model_config": now_model_config,
             "score": score,
             'debug_var': debug_var,
@@ -80,6 +79,13 @@ def run(mat, model_type, model_config):
             from mpl_toolkits.mplot3d import Axes3D
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
+
+            for tup in list_of_random_startend:
+                start, end = tup
+                ax.scatter(start[0], start[1], start[2], color='red')
+                ax.scatter(end[0], end[1], end[2], color='green')
+
+
             ax.plot(mat[:, 0], mat[:, 1], mat[:, 2], color='black', label='orig')
             from matplotlib.pyplot import cm
             import numpy as np
@@ -87,9 +93,8 @@ def run(mat, model_type, model_config):
             for tup in debug_var:
                 gen_mat = tup[0]
                 dist = tup[1]
-                ax.plot(gen_mat[:, 0], gen_mat[:, 1], gen_mat[:, 2], color=next(color), label=dist)
-            ax.set_title(score)
-            ax.legend()
+                ax.plot(gen_mat[:, 0], gen_mat[:, 1], gen_mat[:, 2], color='blue', label=dist)
+            ax.set_title(str(score)+" "+str(d['now_model_config']))
             ax.set_xlim3d(0, 2)
             ax.set_ylim3d(-2, 2)
             ax.set_zlim3d(-2, 2)
@@ -101,13 +106,10 @@ def run(mat, model_type, model_config):
 if __name__ == '__main__':
     import numpy
     dir_of_this_script = os.path.dirname(os.path.realpath(__file__))
-    mat = numpy.load(os.path.join(dir_of_this_script, '..', 'data_for_test', 'test_mat.npy'))
+    mat = numpy.load(os.path.join(dir_of_this_script, '..', 'data_for_test', 'pre_pick_to_pre_place.npy'))
     model_type = 'pydmps'
     model_config = {
-        'n_bfs': [100],
-        'ay': [5, 10, 15, 20, 25, 30],
-        'std_of_normal_noise_in_generalization_test': 0.1,
+        'gen_ay': [5, 10, 20, 40],
     }
     sorted_model_list = run(mat, model_type, model_config)
-    print sorted_model_list[0]
 

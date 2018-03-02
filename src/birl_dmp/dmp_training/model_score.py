@@ -4,11 +4,10 @@ import util
 import dtw
 
 def score(model, orig_mat, list_of_random_startend):
-
     list_of_gen_mat = []
     for idx, tup in enumerate(list_of_random_startend):
-        now_start = tup[0]
-        now_end = tup[1]
+        now_start = tup[0].copy()
+        now_end = tup[1].copy()
         list_of_gen_mat.append(
             util.generalize_via_dmp(now_start, now_end, model)
         ) 

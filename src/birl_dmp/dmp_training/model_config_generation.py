@@ -64,35 +64,24 @@ def get_model_config_generator(model_type, _model_config):
 
     score_hist_stack = []
     if model_type == 'pydmps':
-        import hmmlearn.hmm 
-        if type(model_config['n_bfs']) is not list:
-            model_config['n_bfs'] = [model_config['n_bfs']]
-
-        if 'max_ay' in model_config:
-            model_config['ay'] = range(1, model_config['max_ay']+1)
+        if 'max_gen_ay' in model_config:
+            model_config['gen_ay'] = range(1, model_config['max_gen_ay']+1)
         else:
-            if type(model_config['ay']) is not list:
-                model_config['ay'] = [model_config['ay']]
+            if type(model_config['gen_ay']) is not list:
+                model_config['gen_ay'] = [model_config['gen_ay']]
 
         print model_config
 
+
         init_new_score_level()
-        for n_bfs in model_config['n_bfs']:
+        for gen_ay in model_config['gen_ay']:
             update_last_score_level()
-            if does_bad_score_count_hit(1):
+            if does_bad_score_count_hit(3):
                 clear_last_score_level()
                 break
 
-            init_new_score_level()
-            for ay in model_config['ay']:
-                update_last_score_level()
-                if does_bad_score_count_hit(3):
-                    clear_last_score_level()
-                    break
-
-                now_model_config = {
-                    "n_bfs": n_bfs,
-                    "ay": ay,
-                }
-                
-                yield now_model_config 
+            now_model_config = {
+                "gen_ay": gen_ay,
+            }
+            
+            yield now_model_config 
