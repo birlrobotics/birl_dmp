@@ -4,7 +4,7 @@ import ipdb
 import os
 import util
 import numpy 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 def filter_static_points(mat):
     last = mat[0]
