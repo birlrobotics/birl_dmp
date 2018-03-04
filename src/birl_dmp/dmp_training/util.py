@@ -20,8 +20,13 @@ def generalize_via_dmp(start, end, model):
         gen_ay = model['gen_ay']
         new_dmp = pydmps.dmp_discrete.DMPs_discrete(n_dmps=dmp_instance.n_dmps, n_bfs=100, ay=numpy.ones(dmp_instance.n_dmps)*gen_ay, w=dmp_instance.w)
 
-        new_dmp.y0 = numpy.array(start)
-        new_dmp.goal = numpy.array(end)
+        start = numpy.array(start)
+        end = numpy.array(end)
+
+        new_dmp.y0 = start
+        new_dmp.goal = end
         y_track, dy_track, ddy_track = new_dmp.rollout(tau=1)
+        y_track = numpy.insert(y_track, 0, start, axis=0)
+        y_track = numpy.append(y_track, end.reshape(1, -1), axis=0)
         return y_track
         
