@@ -10,6 +10,8 @@ def get_dmp_model(mat, model_type):
         return dmp
 
 def generalize_via_dmp(start, end, model):
+    # TODO quat->RPY
+
     import pydmps
     import ipdb
     if type(model)==dict and \

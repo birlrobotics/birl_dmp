@@ -19,8 +19,9 @@ def filter_static_points(mat):
     return numpy.array(new_mat)
 
 def run(mat, model_type, model_config):
-    mat = filter_static_points(mat)
+    # TODO quat->RPY
 
+    mat = filter_static_points(mat)
     start = mat[0].copy() 
     end = mat[-1].copy() 
     list_of_random_startend = []
