@@ -10,12 +10,14 @@ def filter_static_points(mat):
     last = mat[0]
     new_mat = [last]
     for idx in range(mat.shape[0]):
-        if numpy.linalg.norm(mat[idx]-last) < 0.01:
+        if numpy.linalg.norm(mat[idx]-last) < 0.01 \
+            and idx != mat.shape[0]-1:
+
             pass
+
         else:
             new_mat.append(mat[idx])
             last = mat[idx]
-
     return numpy.array(new_mat)
 
 def run(mat, model_type, model_config):
