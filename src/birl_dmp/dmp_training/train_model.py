@@ -1,10 +1,10 @@
 import model_config_generation
 import model_score
-import ipdb
 import os
 import util
-import numpy 
-DEBUG_MODE = False
+import numpy
+import ipdb
+DEBUG_MODE = True
 
 def filter_static_points(mat):
     last = mat[0]
@@ -86,9 +86,8 @@ def run(mat, model_type, model_config):
 
             for tup in list_of_random_startend:
                 start, end = tup
-                ax.scatter(start[0], start[1], start[2], color='red')
+                ax.scatter(start[0], start[1], start[2], color='red', marker='s')
                 ax.scatter(end[0], end[1], end[2], color='green')
-
 
             ax.plot(mat[:, 0], mat[:, 1], mat[:, 2], color='black', label='orig')
             from matplotlib.pyplot import cm
@@ -99,10 +98,15 @@ def run(mat, model_type, model_config):
                 dist = tup[1]
                 ax.plot(gen_mat[:, 0], gen_mat[:, 1], gen_mat[:, 2], color='blue', label=dist)
             ax.set_title(str(score)+" "+str(d['now_model_config']))
-            ax.set_xlim3d(0, 2)
-            ax.set_ylim3d(-2, 2)
-            ax.set_zlim3d(-2, 2)
+            ax.set_xlim3d(-0.5, 0.5)
+            ax.set_ylim3d(-0.5, 0.5)
+            ax.set_zlim3d(-0.5, 0.5)
+            #ax.set_aspect(1./ax.get_data_ratio())
+            ax.set_xlabel('xlabel', fontsize=10)
+            ax.set_ylabel('ylabel', fontsize=10)
+            ax.set_zlabel('zlabel', fontsize=10)
             fig.show()
+        print("Press [Enter] to continue")
         raw_input()
 
     return sorted_model_list
@@ -113,7 +117,7 @@ if __name__ == '__main__':
     mat = numpy.load(os.path.join(dir_of_this_script, '..', 'data_for_test', 'pre_pick_to_pre_place.npy'))
     model_type = 'pydmps'
     model_config = {
-        'gen_ay': [5, 10, 20, 40],
+        'gen_ay': [3, 5, 10, 20],
     }
     sorted_model_list = run(mat, model_type, model_config)
 
